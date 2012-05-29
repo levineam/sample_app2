@@ -1,7 +1,9 @@
 SampleApp2::Application.routes.draw do
-  get "users/new"
-
-  get "users/new"
+  resources :users #eliminates need for => get "users/new", because this
+                    #endows the app w/all the actions needed for
+                    #RESTful Users resource
+  
+  root to: 'static_pages#home'
 
   root to: 'static_pages#home'
   
