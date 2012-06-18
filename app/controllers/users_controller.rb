@@ -10,9 +10,12 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     if @user.save
-      # Handle a succesful save. The "validates" methods in user.rb
+      # Handles a succesful save. The "validates" methods in user.rb
       #ensures that only if a name, email, pw and pw confirmation are
       #provided will a user be able to be saved
+      sign_in @user
+      # sign_in method was created in section 8.2.2, it's defined in the
+      # sessions_helper module
       flash[:success] = "Welcome to CharHub!"
       #line above works with flash code in application.html.erb to flash
       #a welcome message if the user succesfully signs up

@@ -2,9 +2,18 @@ SampleApp2::Application.routes.draw do
   resources :users #eliminates need for => get "users/new", because this
                     #endows the app w/all the actions needed for
                     #RESTful Users resource
+  resources :sessions, only: [:new, :create, :destroy]
+    #defining roots for the Sessions resource, together with a custom
+    #named route for the signin page, using the resources method to
+    #define the standard RESTful routes. Using the :only option accepted
+    #by resources allows restricting the actions to those listed
   
-  root to: 'static_pages#home'
-
+  match '/signup',  to: 'users#new'
+  match '/signin',  to: 'sessions#new'
+  match '/signout', to: 'sessions#destroy', via: :delete #via: :delete
+  #indicates that the signout route should be invoked using an
+  #HTTP DELETE request
+  
   root to: 'static_pages#home'
   
   match '/signup',  to: 'users#new'

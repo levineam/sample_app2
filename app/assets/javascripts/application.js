@@ -1,3 +1,12 @@
+//= require jquery
+//= require jquery_ujs
+//= require bootstrap
+//= require_tree .
+
+// This uses the Sprockets library to include the Bootstrap JavaScript,
+// which in turn is available thanks to the bootstrap-sass gem from
+// Section 5.1.2.
+
 // This is a manifest file that'll be compiled into application.js, which will include all the files
 // listed below.
 //
