@@ -1,0 +1,35 @@
+<% provide(:title, "Edit user") %>
+<h1>Update your profile</h1>
+
+<div class="row">
+  <div class="span6 offset3">
+  <%= form_for(@user) do |f| %>
+  <!-- note that this is the same code as used in 7.17, but that
+  was for a POST request (creating new), this is for a PUT
+  request (editing existing), the reason for this is that
+  form_for(@user)the new_record? boolean method to determine if
+  a user is new or existing, if @user.new_record? is true, it
+  uses a POST request to load the page for making a new user, if
+  it's false, the browser loads the edit page -->
+      <%= render 'shared/error_messages' %>
+      <!-- reuses the shared "error_messages" partial from 7.3.2. -->
+
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+
+      <%= f.label :email %>
+      <%= f.text_field :email %>
+
+      <%= f.label :password %>
+      <%= f.password_field :password %>
+
+      <%= f.label :password_confirmation, "Confirm Password" %>
+      <%= f.password_field :password_confirmation %>
+
+      <%= f.submit "Save changes", class: "btn btn-large btn-primary" %>
+    <% end %>
+
+    <%= gravatar_for @user %>
+    <a href="http://gravatar.com/emails">change</a>
+  </div>
+</div>

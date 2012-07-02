@@ -8,7 +8,7 @@ module SessionsHelper
   #use to make a module for authentication, as opposed to creating an
   #all new module just for authentication
   
-  #WE'RE DEFINING METHODS: that's the whoe point of this. E.g. the
+  #WE'RE DEFINING METHODS: that's the whole point of this. E.g. the
   #para that begins "def signed_in?" is the code for creating a boolean
   #sign_in? method
   
@@ -35,9 +35,13 @@ module SessionsHelper
   def current_user=(user)
     @current_user = user
   end
+    #note the odd equals sign. This simply defines the method
+    #current_user= which is expressly designed to handle assignment to
+    #current_user
   
   def current_user
     @current_user ||= User.find_by_remember_token(cookies[:remember_token])
+  end
     #self.current_user = user is an assignment, this line is special Ruby
     #syntax for defining such an assignment function
     
@@ -47,13 +51,31 @@ module SessionsHelper
     #@current_user is undefined. If defined, i.e. if current_user has
     #already been called, just returns @current_user w/o hitting the db
     
-    #note the odd equals sign. This simply defines the method
-    #current_user= which is expressly designed to handle assignment to
-    #current_user
+  def current_user?(user)
+    user == current_user
   end
     
   def sign_out
     self.current_user = nil
     cookies.delete(:remember_token)
   end
+  
+  def redirect_back_or(default)
+    redirect_to(session[:return_to] || default)
+    session.delete(:return_to)
+  end
+  
+  def store_location
+    session[:return_to] = request.fullpath
+  end
+  #the "session" facility provided by Rails is like a cookie variable
+  #that auto-expires when the browser closes
+  
+  #request.fullpath retrieves the full path (URI) of the requested page
+  
+  #So the store_location method puts the requested URI in the "session"
+  #variable under the key ":return_to"
+  
+  #NOTE: to make use of store_location, have to add it to the
+  #signed_in_user before filter
 end

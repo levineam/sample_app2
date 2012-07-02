@@ -9,7 +9,11 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:session][:password])
       #Sign the user in and redirect to the user's show page
       sign_in user
-      redirect_to user
+      redirect_back_or user #replaced --> redirect_to user
+      #redirect_back_or contains the code:
+        #session[:return_to] || default
+      #this evaluatios to session[:return_to] unless it's nil, in which
+      #case it evaluates to the given default URI
     else
       flash.now[:error] = 'Invalid email/password combination' # Not quite right!
         #unlike "flash", "flash.now" is designed for flashing messages

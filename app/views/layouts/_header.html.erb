@@ -7,14 +7,14 @@
           <li><%= link_to "Home", root_path %></li>
           <li><%= link_to "Help", help_path %></li>
           <% if signed_in? %>
-            <li><%= link_to "Users", '#' %></li>
+            <li><%= link_to "Users", users_path %></li>
             <li id="fat-menu" class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 Account <b class="caret"></b>
               </a>
               <ul class="dropdown-menu">
                 <li><%= link_to "Profile", current_user %></li>
-                <li><%= link_to "Settings", '#' %></li>
+                <li><%= link_to "Settings", edit_user_path(current_user) %></li>
                 <li class="divider"></li>
                 <li>
                   <%= link_to "Sign out", signout_path, method: "delete" %>
@@ -29,6 +29,10 @@
     </div>
   </div>
 </header>
+
+<!-- edit_user_path was auto created in 7.1 by adding the line
+"resources :users" to the config/routes.rb file, we created the
+"current_user" helper in 8.22 -->
 
 <!-- The dropdown menu requires the use of Bootstrap’s JavaScript library,
 which we can include using the Rails asset pipeline by editing the
