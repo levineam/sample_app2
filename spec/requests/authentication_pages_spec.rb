@@ -68,6 +68,19 @@ describe "Authentication" do
             page.should have_selector('title', text: 'Edit user')
             #should be directed to user's own edit page
           end
+          
+          describe "when signing in again" do
+            before do
+              visit signin_path
+              fill_in "Email", with: user.email
+              fill_in "Password", with: user.password
+              click_button "Sign in"
+            end
+            
+            it "should render the default (profile) page" do
+              page.should have_selector('title', text: user.name)
+            end
+          end
         end
       end
     # to test friendly forwarding (when a user tries to access another
@@ -139,6 +152,26 @@ describe "Authentication" do
         #to protect the edit and update actions
       end
     end
+    
+    describe "as non-admin user" do
+      let(:user) { FactoryGirl.create(:user) }
+      let(:non_admin) { FactoryGirl.create(:user) }
+      
+      before { sign_in non_admin }
+      
+      describe "submitting a DELETE request to the Users#destroy action" do
+        before { delete user_path(user) }
+        specify { response.should redirect_to(root_path) }
+      end
+    end
+    #  this block makes sure that admins can destroy, but others CANNOT,
+    #e.g. by issuing a DELETE request directly from the command line
+    #  we also add a before_filter to the users_controller to restrict
+    #access to the destroy action to admins
   end
 end
+
+  
+
+
   

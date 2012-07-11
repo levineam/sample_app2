@@ -1,0 +1,22 @@
+<li>
+  <%= gravatar_for user, size: 52 %>
+  <%= link_to user.name, user %>
+  <% if current_user.admin? && !current_user?(user) %>
+      | <%= link_to "delete", user, method: :delete,
+                                    data: { confirm: "You sure?" } %>
+  <% end %>
+  <!-- "method: :delete" arranges for the link to issue the necessary
+  DELETE request
+  - also wrapped each link in if-statement so only admins can see them
+  - Browsers can't send DELETE requests natively, so Rails uses JS
+  - for the delete links to work, need to add "destroy" action to
+    the users_controller, which finds the corresponding userand destroys
+    it with the Active Record "destroy" method, then redirecting to the
+    user index
+    - note: we also add :destroy to the signed_in_user before filter
+  - note: the bar before the code for deleting is literally just a bar
+    that will appear in the web browser before the "delete" link
+  - the "delete" method must automatically search the controller for
+    a "destroy" action, because we didn't hard code the connection -->
+    
+</li>

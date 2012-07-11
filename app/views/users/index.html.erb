@@ -1,11 +1,20 @@
 <% provide(:title, 'All users') %>
 <h1>All users</h1>
 
+<%= will_paginate %>
+
 <ul class="users">
-  <% @users.each do |user| %>
-    <li>
-      <%= gravatar_for user, size: 52 %>
-      <%= link_to user.name, user %>
-    </li>
-  <% end %>
+    <!-- <% @users.each do |user| %> -->
+     <%= render @users %>
+     <!-- in this context, Rails automatically looks for a partial
+     called _user.html.erb, note that _user.html.erb is located in
+     the same folder as this index.html.erb -->
+    <% end %>
 </ul>
+
+<%= will_paginate %>
+<!-- added to break a long list into separate pages -->
+<!-- User.paginate pulls the users out of the database one chunk at a time
+(30 by default), based on the :page parameter. -->
+
+

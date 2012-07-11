@@ -27,8 +27,41 @@ describe User do
   it { should respond_to(:password) }
   it { should respond_to(:password_confirmation) }
   it { should respond_to(:remember_token) }
+  it { should respond_to(:admin) }
   it { should respond_to(:authenticate) }
+  
   it { should be_valid }
+  it { should_not be_admin }
+  
+  describe "accessible attributes" do
+    it "should not allow access to admin" do
+      expect do
+        User.new(user_id: user.id)
+          should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+      end
+    end
+  end
+  # block for testing whether admin attrib is accessible
+  
+  describe "with admin attribute set to 'true'" do
+    before { @user.toggle!(:admin) }
+    #uses the toggle! method to flip admin attribute from false to true
+    #since when add the admin boolean attribute to users with:
+    #rails generate migration add_admin_to_users admin:boolean, we then
+    #add "default: false" to the column (by going to
+    #[timestamp]_add_admin_to_users.rb), so toggling switches the value
+    #to true, though if we hadn't set default as false, admin would
+    #still have a value of nil, which is still false, but this conveys
+    #what we're aiming for more explicitly to Rails and human readers
+    
+    it { should be_admin }
+    #implies that the user should have an "admin?" boolean method
+    # as usual add  admin attribute w/a migration indicating boolean
+    #type in command line
+    # $ rails generate migration add_admin_to_users admin:boolean
+    # which simply adds the admin column to the users table
+  end
+  
   
   describe "when password is not present" do
     before { @user.password = @user.password_confirmation = " " }

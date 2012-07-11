@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
-  before_filter :signed_in_user, only: [:index, :edit, :update]
+  before_filter :signed_in_user, only: [:index, :edit, :update, :destroy]
   #before_filter arranges for a particular method to be called before
-  #the given actions, here: signed_in_user method, which must define
+  #the given actions, here: signed_in_user method, which we must define
   
   #by default applies to all actions in controller, so restrict to
   #:edit and :update actions
@@ -13,8 +13,12 @@ class UsersController < ApplicationController
   
   #both signed_in_user and correct_user are defined below under private
   
+  before_filter :admin_user,     only: :destroy
+  #restricts access to the destroy actions to admins
+  
   def index
-    @users = User.all
+    @users = User.paginate(page: params[:page])
+    #@users = User.all --
   end
   # the application code uses User.all to pull all the users out of the
   #database, assigning them to an @users instance variable for use in
@@ -75,17 +79,28 @@ class UsersController < ApplicationController
     #not, then re-render the edit page
   end
   
-  private
+  def destroy
+    User.find(params[:id]).destroy
+    flash[:success] = "User destroyed."
+    redirect_to users_path
+  end
+  #  method chaining to combine destroy and find methods into 1 line
+  #  the "delete" method must automatically search the controller for a
+  #destroy action because we didn't hard-code a link between the two
   
+  private
+        
     def signed_in_user
       unless signed_in?
         store_location
-        redirect_to signin_path, notice: "Please sign in" #unless signed_in?
+        redirect_to signin_path, notice: "Please sign in." #unless signed_in?
       end
     end
     #"notice: "Please sign in." 
     #is a shortcut for:
     #flash[:notice] "Please sign in."
+      #note: the newer ROR3T moves the "notice:" inside the deny_access
+      #variable in the sessions_helper
     #redirect_to signin_path, same construction works for :error key,
     #but not :success
     
@@ -101,4 +116,8 @@ class UsersController < ApplicationController
     #also be the "current_user." current_user is another method we
     #defined in the sessions_helper which associates the remember token
     #with the user
+    
+    def admin_user
+      redirect_to(root_path) unless current_user.admin?
+    end
 end
