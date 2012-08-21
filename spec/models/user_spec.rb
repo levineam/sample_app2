@@ -29,6 +29,8 @@ describe User do
   it { should respond_to(:remember_token) }
   it { should respond_to(:admin) }
   it { should respond_to(:authenticate) }
+  it { should respond_to(:microposts) }
+  it { should respond_to(:feed) }
   
   it { should be_valid }
   it { should_not be_admin }
@@ -163,5 +165,57 @@ describe User do
     #is equivalent to it { @user.remember_token.should_not be_blank }
     #-->use "it" to apply test to the subject (e.g. "user") and "its"
     #to apply test to attribute of the subject (e.g. ":remember_token)
+  end
+  
+  describe "micropost associations" do
+
+    before { @user.save }
+    let!(:older_micropost) do 
+      FactoryGirl.create(:micropost, user: @user, created_at: 1.day.ago)
+    end
+    let!(:newer_micropost) do
+      FactoryGirl.create(:micropost, user: @user, created_at: 1.hour.ago)
+    end
+
+    it "should have the right microposts in the right order" do
+      @user.microposts.should == [newer_micropost, older_micropost]
+    end
+    # last line is key, indicates posts should be ordered newest first,
+    #and that user.microposts is an array of posts
+    # get these to pass by use Rails facility default_scope and :order
+    #parameter in micropost.rb
+    # let variables are lazy, meaning that they only spring into
+    #existence when referenced. The problem is that we want the
+    #microposts to exist immediately, so that the timestamps are in the
+    #right order and so that @user.microposts isn’t empty. We accomplish
+    #this with let!, which forces the corresponding variable to come
+    #into existence immediately.
+    
+    it "should destroy associated microposts" do
+      microposts = @user.microposts
+      @user.destroy
+      microposts.each do |micropost|
+        Micropost.find_by_id(micropost.id).should be_nil
+      end
+      # Micropost.find_by_id returns nil if the record is not
+      #found, whereas Micropost.find raises an exception on failure,
+      #which is a bit harder to test for
+      # In case you’re curious:
+#lambda do 
+  #Micropost.find(micropost.id)
+#end.should raise_error(ActiveRecord::RecordNotFound)
+    end
+    
+    describe "status" do
+      let(:unfollowed_post) do
+        FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
+      end
+      
+      its(:feed) { should include(newer_micropost) }
+      its(:feed) { should include(older_micropost) }
+      its(:feed) { should_not include(unfollowed_post) }
+    end
+    #uses the array include? method, which simply checks if an array
+    #includes the given element
   end
 end

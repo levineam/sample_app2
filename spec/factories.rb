@@ -17,4 +17,13 @@ FactoryGirl.define do
     #(such as :name) and a block with one variable, which we have called
     #"n." Upon successive invocations of the FactoryGirl method
     #(FactoryGirl.create(:user)), the block variable is auto incremented
+    
+    factory :micropost do
+        content "Lorem ipsum"
+        user
+    end
+    # tell Factory Girl about the micropost’s associated user just by
+    #including a user in the definition of the factory
+    # this allows us to define factory microposts as follows:
+    #FactoryGirl.create(:micropost, user: @user, created_at: 1.day.ago)
 end

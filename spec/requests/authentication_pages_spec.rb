@@ -89,7 +89,20 @@ describe "Authentication" do
     #we first visit the user edit page, which redirects to the signin
     #page. We then enter valid signin information and click the
     #“Sign in” button. The resulting page, which by default is the
-    #user’s profile, should in this case be the “Edit user” page. 
+    #user’s profile, should in this case be the “Edit user” page.
+    
+      describe "in the Microposts controller" do
+        
+        describe "submitting to the create action" do
+          before { post microposts_path }
+          specify { response.should redirect_to(signin_path) }
+        end
+        
+        describe "submitting to the destroy action" do
+          before { delete micropost_path(FactoryGirl.create(:micropost)) }
+          specify { response.should redirect_to(signin_path) }
+        end
+      end
       
       describe "in the Users controller" do
         

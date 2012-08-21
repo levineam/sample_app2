@@ -27,6 +27,7 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
   
   def new
@@ -89,20 +90,6 @@ class UsersController < ApplicationController
   #destroy action because we didn't hard-code a link between the two
   
   private
-        
-    def signed_in_user
-      unless signed_in?
-        store_location
-        redirect_to signin_path, notice: "Please sign in." #unless signed_in?
-      end
-    end
-    #"notice: "Please sign in." 
-    #is a shortcut for:
-    #flash[:notice] "Please sign in."
-      #note: the newer ROR3T moves the "notice:" inside the deny_access
-      #variable in the sessions_helper
-    #redirect_to signin_path, same construction works for :error key,
-    #but not :success
     
     #:success, :error and :notice are the three flash styles supported
     #natively by Bootstrap CSS

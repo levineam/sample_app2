@@ -7,6 +7,7 @@ SampleApp2::Application.routes.draw do
     #named route for the signin page, using the resources method to
     #define the standard RESTful routes. Using the :only option accepted
     #by resources allows restricting the actions to those listed
+  resources :microposts, only: [:create, :destroy]
   
   match '/signup',  to: 'users#new'
   match '/signin',  to: 'sessions#new'

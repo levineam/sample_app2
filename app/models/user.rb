@@ -12,6 +12,9 @@
 class User < ActiveRecord::Base
   attr_accessible :name, :email, :password, :password_confirmation #makes email and name attributes accessible to OUTSIDE USERS
   has_secure_password
+  has_many :microposts, dependent: :destroy
+  # this, plus belongs_to line in user.rb implements association between
+  #users and their microposts
   
   #before_save { self.email.downcase! }-->replaced with below from 8.18
   before_save { |user| user.email = email.downcase }
@@ -27,6 +30,14 @@ class User < ActiveRecord::Base
                     #replaced "true" with { case_sens... } rails infers "true"
   validates :password, length: { minimum: 6 }
   validates :password_confirmation, presence: true
+  
+  def feed
+    # This is preliminary. See "Following users" for full implement
+    Micropost.where("user_id = ?", id)
+  end
+  # The ? ensures that id is properly escaped before being in the
+  #underlying SQL query, thereby escaping a serious security hole called
+  #a SQL injection
   
   private
   #using the "private" keyword makes sure the methods below are only

@@ -1,0 +1,12 @@
+<!-- this is the form for creating microposts. Have to define @micropost
+in the static pages controller, and redefine the error messages partial,
+for this to work-->
+
+<%= form_for(@micropost) do |f| %>
+  <%= render 'shared/error_messages', object: f.object %>
+  <div class="field">
+    <%= f.text_area :content, placeholder: "Compose new micropost..." %>
+  </div>
+  <%= f.submit "Post", class: "btn btn-large btn-primary" %>
+  <span class="countdown"></span>
+<% end %>

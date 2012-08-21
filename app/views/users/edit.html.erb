@@ -11,7 +11,7 @@
   a user is new or existing, if @user.new_record? is true, it
   uses a POST request to load the page for making a new user, if
   it's false, the browser loads the edit page -->
-      <%= render 'shared/error_messages' %>
+      <%= render 'shared/error_messages', object: f.object %>
       <!-- reuses the shared "error_messages" partial from 7.3.2. -->
 
       <%= f.label :name %>

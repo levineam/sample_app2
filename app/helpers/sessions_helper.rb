@@ -54,6 +54,21 @@ module SessionsHelper
   def current_user?(user)
     user == current_user
   end
+
+  def signed_in_user
+    unless signed_in?
+      store_location
+      redirect_to signin_url, notice: "Please sign in."
+    end
+  end
+    #moved from users_controller so can use in mp controller as well
+    #"notice: "Please sign in." 
+    #is a shortcut for:
+    #flash[:notice] "Please sign in."
+      #note: the newer ROR3T moves the "notice:" inside the deny_access
+      #variable in the sessions_helper
+    #redirect_to signin_path, same construction works for :error key,
+    #but not :success
     
   def sign_out
     self.current_user = nil

@@ -8,4 +8,20 @@
       </h1>
     </section>
   </aside>
+  <div class="span8">
+    <% if @user.microposts.any? %>
+      <h3>Microposts (<%= @user.microposts.count %>)</h3>
+      <ol class="microposts">
+        <%= render @microposts %>
+      </ol>
+      <%= will_paginate @microposts %>
+    <% end %>
+    <!-- have to include "@microposts" because, in the context of the
+    Users controller, will_paginate assumes the existence of an instance
+    variable called @users -->
+    <!-- uses the ordered list tag ol, responsible for generating the
+    list of microposts, but you can see that it just defers the heavy
+    lifting to a micropost partial, means that we must define a
+    _micropost.html.erb partial -->
+  </div>
 </div>
