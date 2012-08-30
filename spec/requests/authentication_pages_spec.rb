@@ -83,6 +83,18 @@ describe "Authentication" do
           end
         end
       end
+      
+      describe "in the Relationships controller" do
+        describe "submitting to the create action" do
+          before { post relationships_path }
+          specify { response.should redirect_to(signin_path) }
+        end
+
+        describe "submitting to the destroy action" do
+          before { delete relationship_path(1) }
+          specify { response.should redirect_to(signin_path) }          
+        end
+      end
     # to test friendly forwarding (when a user tries to access another
     #user's edit page, we redirect them to their own edit page instead
     
@@ -132,6 +144,16 @@ describe "Authentication" do
           it { should have_selector('title', text: 'Sign in') }
         end
         #note this is the "users_path", plural, not the user_path
+        
+        describe "visiting the following page" do
+          before { visit following_user_path(user) }
+          it { should have_selector('title', text: 'Sign in') }
+        end
+        
+        describe "visiting the followers page" do
+          before { visit followers_user_path(user) }
+          it { should have_selector('title', text: 'Sign in') }
+        end
       end
       
       describe "as wrong user" do

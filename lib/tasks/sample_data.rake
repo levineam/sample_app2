@@ -3,13 +3,20 @@ namespace :db do
   task populate: :environment do
     #ensures that the Rake task has access to the local Rails environment
     #including the User model (and hence User.create!)
+    make_users
+    make_microposts
+    make_relationships
+  end
+end
+
+def make_users
     admin = User.create!(name: "Example User",
     #User.create! is like the create method, except it raises an
     #exception for an invalid user rather than returning false. This
     #noisier construction makes debugging easier by avoiding silent errors
-                 email: "example@railstutorial.org",
-                 password: "foobar",
-                 password_confirmation: "foobar")
+                         email:    "example@railstutorial.org",
+                         password: "foobar",
+                         password_confirmation: "foobar")
     admin.toggle!(:admin)
     #  I believe the above code ("admin" through "admin.toggle!")
     #represents the first user we are creating
@@ -23,19 +30,30 @@ namespace :db do
     #a security measure, if we didn't do it, one could submit a PUT
     #making any user they choose an admin
     99.times do |n|
-      name  = Faker::Name.name
-      email = "example-#{n+1}@railstutorial.org"
-      password  = "password"
-      User.create!(name: name,
-                   email: email,
-                   password: password,
-                   password_confirmation: password)
+        name  = Faker::Name.name
+        email = "example-#{n+1}@railstutorial.org"
+        password  = "password"
+        User.create!(name:     name,
+                     email:    email,
+                     password: password,
+                     password_confirmation: password)
     end
-    
+end
+
+def make_microposts
     users = User.all(limit: 6)
     50.times do
         content = Faker::Lorem.sentence(5)
         users.each { |user| user.microposts.create!(content: content) }
     end
-  end
 end
+
+def make_relationships
+  users = User.all
+  user  = users.first
+  followed_users = users[2..50]
+  followers      = users[3..40]
+  followed_users.each { |followed| user.follow!(followed) }
+  followers.each      { |follower| follower.follow!(user) }
+end
+

@@ -1,0 +1,24 @@
+<%= form_for(current_user.relationships.build(followed_id: @user.id),
+             remote: true) do |f| %>
+  <div><%= f.hidden_field :followed_id %></div>
+  <%= f.submit "Follow", class: "btn btn-large btn-primary" %>
+<% end %>
+<!-- builds a new relationship by sending a POST request to the
+Relationships controller to create a new relationship, unlike
+_unfollow.html.erb finds an existing one -->
+<!-- note this has no content, but we still need it to send the
+followed_id which we accomplish w/the hidden_field method which produces
+the HTML of the form:
+
+<input id="followed_relationship_followed_id"
+name="followed_relationship[followed_id]"
+type="hidden" value="3" />
+
+That puts the relevant info on the page w/o displaying it in browser -->
+
+<!-- the "remote: true" is desceptively simple. Without this code, after
+a user follows another user they will be redirected back to their own
+profile page because they are sending a request, but we want the user to
+stay on the other user's profile page. To do this we need to use Ajax,
+which allows web pages to send requests w/o leaving the page. All we had
+to do is add remote: true and Rails automagically uses Ajax. -->

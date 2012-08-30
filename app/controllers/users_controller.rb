@@ -1,11 +1,15 @@
 class UsersController < ApplicationController
-  before_filter :signed_in_user, only: [:index, :edit, :update, :destroy]
+  before_filter :signed_in_user,
+        only: [:index, :edit, :update, :destroy, :following, :followers]
+  before_filter :correct_user,   only: [:edit, :update]
+  before_filter :admin_user,     only: :destroy
+  
   #before_filter arranges for a particular method to be called before
   #the given actions, here: signed_in_user method, which we must define
   
   #by default applies to all actions in controller, so restrict to
   #:edit and :update actions
-  before_filter :correct_user,   only: [:edit, :update]
+  
   #correct_user uses the current_user? boolean method which we define
   #in the sessions_helper to make sure not just that the user trying
   #to edit and update is signed in, but that they are the correct user
@@ -13,8 +17,23 @@ class UsersController < ApplicationController
   
   #both signed_in_user and correct_user are defined below under private
   
-  before_filter :admin_user,     only: :destroy
   #restricts access to the destroy actions to admins
+  
+  def following
+    @title = "Following"
+    @user = User.find(params[:id])
+    @users = @user.followed_users.paginate(page: params[:page])
+    render 'show_follow'
+  end
+
+  def followers
+    @title = "Followers"
+    @user = User.find(params[:id])
+    @users = @user.followers.paginate(page: params[:page])
+    render 'show_follow'
+  end
+  # we must create the show_follow view, but since the two cases are so
+  #similar we can use just one view for both
   
   def index
     @users = User.paginate(page: params[:page])
@@ -105,6 +124,6 @@ class UsersController < ApplicationController
     #with the user
     
     def admin_user
-      redirect_to(root_path) unless current_user.admin?
+      redirect_to root_path unless current_user.admin?
     end
 end

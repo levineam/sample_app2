@@ -31,6 +31,13 @@ describe User do
   it { should respond_to(:authenticate) }
   it { should respond_to(:microposts) }
   it { should respond_to(:feed) }
+  it { should respond_to(:relationships) }
+  it { should respond_to(:followed_users) }
+  it { should respond_to(:reverse_relationships) }
+  it { should respond_to(:followers) }
+  it { should respond_to(:following?) }
+  it { should respond_to(:follow!) }
+  it { should respond_to(:unfollow!) }
   
   it { should be_valid }
   it { should_not be_admin }
@@ -47,6 +54,8 @@ describe User do
   
   describe "with admin attribute set to 'true'" do
     before { @user.toggle!(:admin) }
+    it { should be_admin }
+  end
     #uses the toggle! method to flip admin attribute from false to true
     #since when add the admin boolean attribute to users with:
     #rails generate migration add_admin_to_users admin:boolean, we then
@@ -55,15 +64,12 @@ describe User do
     #to true, though if we hadn't set default as false, admin would
     #still have a value of nil, which is still false, but this conveys
     #what we're aiming for more explicitly to Rails and human readers
-    
-    it { should be_admin }
+     
     #implies that the user should have an "admin?" boolean method
     # as usual add  admin attribute w/a migration indicating boolean
     #type in command line
     # $ rails generate migration add_admin_to_users admin:boolean
     # which simply adds the admin column to the users table
-  end
-  
   
   describe "when password is not present" do
     before { @user.password = @user.password_confirmation = " " }
@@ -210,12 +216,55 @@ describe User do
       let(:unfollowed_post) do
         FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
       end
+      let(:followed_user) { FactoryGirl.create(:user) }
       
+      before do
+        @user.follow!(followed_user)
+        3.times { followed_user.microposts.create!(content: "Lorem ipsum") }
+      end
+
       its(:feed) { should include(newer_micropost) }
       its(:feed) { should include(older_micropost) }
       its(:feed) { should_not include(unfollowed_post) }
+      its(:feed) do
+        followed_user.microposts.each do |micropost|
+          should include(micropost)
+        end
+      end
     end
-    #uses the array include? method, which simply checks if an array
+    # uses the array include? method, which simply checks if an array
     #includes the given element
+    # :feed is defined in user.rb
+  end
+  
+  describe "following" do
+    let(:other_user) { FactoryGirl.create(:user) }    
+    before do
+      @user.save
+      @user.follow!(other_user)
+    end
+
+    it { should be_following(other_user) }
+    its(:followed_users) { should include(other_user) }
+  # first part of test creates a user "other_user) and has @user follow
+  #it. The second part makes sure the @user is following other_user and
+  #that other_user is stored in @user's followed_users column
+  # following? and following! defined in user.rb
+  
+    describe "followed user" do
+      subject { other_user }
+      its(:followers) { should include(@user) }
+    end
+    # Notice how we switch subjects using the subject method, replacing
+    #@user with other_user, allowing us to test the follower
+    #relationship in a natural way
+  
+    describe "and unfollowing" do
+      before { @user.unfollow!(other_user) }
+
+      it { should_not be_following(other_user) }
+      its(:followed_users) { should_not include(other_user) }
+    end
+    #see user.rb for definition of unfollow!(other_user)
   end
 end

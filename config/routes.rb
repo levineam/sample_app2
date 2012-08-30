@@ -1,13 +1,28 @@
 SampleApp2::Application.routes.draw do
-  resources :users #eliminates need for => get "users/new", because this
+  resources :users do#eliminates need for => get "users/new", because this
                     #endows the app w/all the actions needed for
                     #RESTful Users resource
-  resources :sessions, only: [:new, :create, :destroy]
+    member do
+      get :following, :followers
+    end
+    # creates URIs /users/1/following and /users/1/followers
+    # use get because both pages will be showing data, so we want them
+    #to respond to GET requests
+    # the member method means that the routes respond to URIs containing
+    #the user id
+    # note: we are not using "followed users" terminology here because
+    #then the named route would be followed_users_user_path, so we just
+    #use "following" instead, yielding following_user_path(1)
+  end
+  
+  resources :sessions,      only: [:new, :create, :destroy]
     #defining roots for the Sessions resource, together with a custom
     #named route for the signin page, using the resources method to
     #define the standard RESTful routes. Using the :only option accepted
     #by resources allows restricting the actions to those listed
-  resources :microposts, only: [:create, :destroy]
+  resources :microposts,    only: [:create, :destroy]
+  resources :relationships, only: [:create, :destroy]
+  #the routes for user relationships (for use in the partials?)
   
   match '/signup',  to: 'users#new'
   match '/signin',  to: 'sessions#new'
