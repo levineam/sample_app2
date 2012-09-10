@@ -1,3 +1,6 @@
+# when modeling longer posts (e.g. comments) use the "text" type instead
+#of "string"
+
 class Micropost < ActiveRecord::Base
   attr_accessible :content #, :user_id --> don't want accessible
   belongs_to :user

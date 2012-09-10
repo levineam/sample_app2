@@ -53,7 +53,11 @@ describe User do
   # block for testing whether admin attrib is accessible
   
   describe "with admin attribute set to 'true'" do
-    before { @user.toggle!(:admin) }
+    before do
+      @user.save!
+      @user.toggle!(:admin)
+    end
+
     it { should be_admin }
   end
     #uses the toggle! method to flip admin attribute from false to true

@@ -39,9 +39,10 @@ class UsersController < ApplicationController
     @users = User.paginate(page: params[:page])
     #@users = User.all --
   end
-  # the application code uses User.all to pull all the users out of the
-  #database, assigning them to an @users instance variable for use in
-  #the view, but showing all the users at once is bad, so must fix
+  # @users = User.all asks the User model to retrieve a list of users
+  #from the database, assigning them to an @users instance variable for
+  #use in the view, but showing all the users at once is bad, so must
+  #fix
   
   
   def show

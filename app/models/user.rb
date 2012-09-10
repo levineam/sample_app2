@@ -9,6 +9,9 @@
 #  updated_at :datetime        not null
 #
 
+# the code below defines the @user variable
+#Variables that start with the @ sign, called instance variables, are
+#automatically available in the view
 class User < ActiveRecord::Base
   attr_accessible :name, :email, :password, :password_confirmation #makes email and name attributes accessible to OUTSIDE USERS
   has_secure_password
