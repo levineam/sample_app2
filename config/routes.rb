@@ -1,4 +1,7 @@
 SampleApp2::Application.routes.draw do
+  get "charities/new"
+  #eliminate this in 7.1.2
+
   resources :users do#eliminates need for => get "users/new", because this
                     #endows the app w/all the actions needed for
                     #RESTful Users resource
@@ -24,6 +27,7 @@ SampleApp2::Application.routes.draw do
   resources :relationships, only: [:create, :destroy]
   #the routes for user relationships (for use in the partials?)
   
+  match '/create_charity', to: 'charities#new'
   match '/signup',  to: 'users#new'
   match '/signin',  to: 'sessions#new'
   match '/signout', to: 'sessions#destroy', via: :delete #via: :delete
