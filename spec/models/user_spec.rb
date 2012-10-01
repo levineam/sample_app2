@@ -30,6 +30,7 @@ describe User do
   it { should respond_to(:admin) }
   it { should respond_to(:authenticate) }
   it { should respond_to(:microposts) }
+  it { should respond_to(:charities) }
   it { should respond_to(:feed) }
   it { should respond_to(:relationships) }
   it { should respond_to(:followed_users) }
@@ -241,6 +242,21 @@ describe User do
     # :feed is defined in user.rb
   end
   
+  describe "charity associations" do
+
+    before { @user.save }
+    let!(:older_charity) do 
+      FactoryGirl.create(:charity, user: @user, created_at: 1.day.ago)
+    end
+    let!(:newer_charity) do
+      FactoryGirl.create(:charity, user: @user, created_at: 1.hour.ago)
+    end
+
+    it "should have the right charities in the right order" do
+      @user.charities.should == [newer_charity, older_charity]
+    end
+  end
+
   describe "following" do
     let(:other_user) { FactoryGirl.create(:user) }    
     before do

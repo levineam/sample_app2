@@ -15,6 +15,7 @@
 class User < ActiveRecord::Base
   attr_accessible :name, :email, :password, :password_confirmation #makes email and name attributes accessible to OUTSIDE USERS
   has_secure_password
+  has_many :charities
   has_many :microposts, dependent: :destroy
   # this, plus belongs_to line in user.rb implements association between
   #users and their microposts

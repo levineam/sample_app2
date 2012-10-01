@@ -1,4 +1,6 @@
 <% provide(:title, @user.name) %>
+<h1>Your Profile</h1>
+  <p></p>
 <div class="row">
   <aside class="span4">
     <section>
@@ -7,6 +9,9 @@
         <%= @user.name %>
       </h1>
     </section>
+    <section>
+        <%= render 'shared/stats' %>
+      </section>
   </aside>
   <div class="span8">
     <%= render 'follow_form' if signed_in? %>
